@@ -19,6 +19,7 @@ services:
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     volumes:
       - ./backend:/app
+      - ./uploads:/app/uploads
     environment:
       - DATABASE_URL=postgresql://admin:Perricheno2.7@db:5432/main_db
       - OPENAI_API_KEY=${OPENAI_API_KEY}
@@ -30,6 +31,8 @@ services:
     restart: always
     ports:
       - "8090:80" # Exposed on port 8090
+    volumes:
+      - ./uploads:/usr/share/nginx/html/uploads
     depends_on:
       - backend
 

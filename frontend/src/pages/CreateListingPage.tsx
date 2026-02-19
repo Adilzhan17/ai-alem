@@ -31,6 +31,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
+import ImageUpload from '../components/ImageUpload'
 
 const API = '/api/v1'
 
@@ -316,13 +317,13 @@ export default function CreateListingPage() {
                             <CardContent className="space-y-6">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end bg-muted/30 p-4 rounded-xl border border-dashed">
                                     <div className="space-y-2">
-                                        <Label>Panorama URL</Label>
-                                        <Input
-                                            value={newPanoUrl}
-                                            onChange={e => setNewPanoUrl(e.target.value)}
-                                            placeholder="https://..."
-                                            className="bg-background"
-                                        />
+                                        <Label>Panorama Image</Label>
+                                        <div className="bg-background rounded-md">
+                                             <ImageUpload 
+                                                value={newPanoUrl} 
+                                                onChange={(url) => setNewPanoUrl(url as string)} 
+                                             />
+                                        </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Room Name</Label>
@@ -394,35 +395,12 @@ export default function CreateListingPage() {
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="image_url">Image URL</Label>
-                                    <Input
-                                        id="image_url"
-                                        placeholder="https://example.com/image.jpg"
-                                        value={form.image_url}
-                                        onChange={e => set('image_url', e.target.value)}
+                                    <Label>Main Image</Label>
+                                    <ImageUpload 
+                                        value={form.image_url} 
+                                        onChange={(url) => set('image_url', url as string)} 
                                     />
                                 </div>
-                                <div className="relative aspect-video w-full rounded-lg border bg-muted overflow-hidden flex items-center justify-center">
-                                    {form.image_url ? (
-                                        <img
-                                            src={form.image_url}
-                                            alt="Preview"
-                                            className="h-full w-full object-cover"
-                                            onError={(e) => {
-                                                (e.target as HTMLImageElement).src = '';
-                                                (e.target as HTMLImageElement).style.display = 'none';
-                                                (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                                            }}
-                                        />
-                                    ) : null}
-                                    <div className={`absolute inset-0 flex flex-col items-center justify-center text-muted-foreground ${form.image_url ? 'hidden' : ''}`}>
-                                        <ImageIcon className="h-10 w-10 mb-2 opacity-20" />
-                                        <span className="text-xs">No image preview</span>
-                                    </div>
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Note: In this version, please provide a direct URL to an image.
-                                </p>
                             </CardContent>
                         </Card>
 

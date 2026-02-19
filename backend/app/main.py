@@ -41,3 +41,17 @@ app.include_router(contractors.router, prefix="/api/v1", tags=["contractors & su
 app.include_router(moderation.router, prefix="/api/v1/moderation", tags=["moderation"])
 app.include_router(audit_log.router, prefix="/api/v1/audit-log", tags=["audit-log"])
 app.include_router(backoffice.router, prefix="/api/v1/backoffice", tags=["backoffice"])
+
+# ──────── Uploads & Static Files ────────
+from fastapi.staticfiles import StaticFiles
+from app.api.endpoints import uploads
+import os
+
+# Create uploads directory (ensure it exists at startup)
+os.makedirs("uploads", exist_ok=True)
+
+# Mount static files directory
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+# Include router
+app.include_router(uploads.router, prefix="/api/v1/files", tags=["files"])

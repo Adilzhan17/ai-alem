@@ -1,0 +1,45 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          # key: ${{ secrets.SSH_KEY }}
+          source: "."
+          target: "/root/ai-alem"
+          overwrite: true
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          # key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /root/ai-alem
+
+            # Create .env file from secrets
+            echo "DATABASE_URL=postgresql://admin:Perricheno2.7@db:5432/main_db" > backend/.env
+            echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> backend/.env
+            echo "PROJECT_NAME=AI Real Estate Kazakhstan" >> backend/.env
+
+            # Start services
+            docker compose down --remove-orphans || true
+            docker compose up -d --build
+
+            # Prune unused images to save space
+            docker image prune -f

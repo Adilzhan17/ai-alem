@@ -1,10 +1,12 @@
 # Stage 1: Build the React application
-FROM node:18-alpine AS build
+FROM node:18-alpine as build
 
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy package files
+COPY package.json package-lock.json ./ 
+# (If package-lock doesn't exist, it will just copy package.json if glob used, but here explicit)
+# We'll rely on the context having these.
 
 # Install dependencies
 RUN npm install
@@ -12,20 +14,21 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Build the application
-RUN npx vite build
+# Build the app
+RUN npm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
 
-# Copy the build output to default nginx public folder
+# Copy built assets from builder stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy custom Nginx configuration
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Copy custom nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
 EXPOSE 80
 
-# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

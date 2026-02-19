@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react';
-// @ts-ignore
-import pannellum from 'pannellum';
-import 'pannellum/build/pannellum.css';
+
+// Using CDN version to avoid Vite/Rollup bundling issues with the old npm package
+// import pannellum from 'pannellum';
+// import 'pannellum/build/pannellum.css';
 
 export interface PanoramaScene {
     id: string;
@@ -62,7 +63,12 @@ export default function PanoramaViewer({ scenes, initialSceneId, height = "500px
 
         try {
             // @ts-ignore
-            viewerRef.current = pannellum.viewer(containerRef.current, config);
+            if (window.pannellum) {
+                // @ts-ignore
+                viewerRef.current = window.pannellum.viewer(containerRef.current, config);
+            } else {
+                console.error("Pannellum not loaded");
+            }
         } catch (err) {
             console.error("Failed to init pannellum", err);
         }

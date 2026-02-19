@@ -9,7 +9,9 @@ import {
     DollarSign,
     LayoutTemplate,
     Image as ImageIcon,
-    Loader2
+    Loader2,
+    Plus,
+    Trash2
 } from 'lucide-react'
 
 import Layout from '../components/Layout'
@@ -54,6 +56,21 @@ export default function CreateListingPage() {
         image_url: '',
     })
 
+    const [panoramas, setPanoramas] = useState<{ url: string, title: string }[]>([])
+    const [newPanoUrl, setNewPanoUrl] = useState('')
+    const [newPanoTitle, setNewPanoTitle] = useState('')
+
+    const addPanorama = () => {
+        if (!newPanoUrl || !newPanoTitle) return
+        setPanoramas([...panoramas, { url: newPanoUrl, title: newPanoTitle }])
+        setNewPanoUrl('')
+        setNewPanoTitle('')
+    }
+
+    const removePanorama = (idx: number) => {
+        setPanoramas(panoramas.filter((_, i) => i !== idx))
+    }
+
     const set = (key: string, val: string) => setForm(f => ({ ...f, [key]: val }))
 
     const handleSubmit = async (isDraft: boolean) => {
@@ -76,6 +93,7 @@ export default function CreateListingPage() {
                     area_sqm: parseFloat(form.area_sqm) || 0,
                     floor: parseInt(form.floor) || null,
                     total_floors: parseInt(form.total_floors) || null,
+                    metadata_json: { panoramas }
                 }),
             })
 
@@ -278,6 +296,89 @@ export default function CreateListingPage() {
                                         />
                                     </div>
                                 </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* 360 Panoramas */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <div className="bg-qal-primary/10 p-1.5 rounded-lg">
+                                        <svg className="h-5 w-5 text-qal-primary" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12M3 12C3 16.9706 7.02944 21 12 21C16.9706 21 21 16.9706 21 12M3 12H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2" />
+                                        </svg>
+                                    </div>
+                                    360° Virtual Tour
+                                </CardTitle>
+                                <CardDescription>Upload panoramic photos to create an immersive tour.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end bg-muted/30 p-4 rounded-xl border border-dashed">
+                                    <div className="space-y-2">
+                                        <Label>Panorama URL</Label>
+                                        <Input
+                                            value={newPanoUrl}
+                                            onChange={e => setNewPanoUrl(e.target.value)}
+                                            placeholder="https://..."
+                                            className="bg-background"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Room Name</Label>
+                                        <Select value={newPanoTitle} onValueChange={setNewPanoTitle}>
+                                            <SelectTrigger className="bg-background">
+                                                <SelectValue placeholder="Select room" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Living Room">Living Room</SelectItem>
+                                                <SelectItem value="Kitchen">Kitchen</SelectItem>
+                                                <SelectItem value="Bedroom">Bedroom</SelectItem>
+                                                <SelectItem value="Bathroom">Bathroom</SelectItem>
+                                                <SelectItem value="Hallway">Hallway</SelectItem>
+                                                <SelectItem value="Balcony">Balcony</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="sm:col-span-2">
+                                        <Button
+                                            type="button"
+                                            onClick={addPanorama}
+                                            variant="secondary"
+                                            disabled={!newPanoUrl || !newPanoTitle}
+                                            className="w-full"
+                                        >
+                                            <Plus className="mr-2 h-4 w-4" /> Add Scene
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {panoramas.length > 0 && (
+                                    <div className="space-y-3">
+                                        <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Added Scenes ({panoramas.length})</Label>
+                                        <div className="grid grid-cols-1 gap-2">
+                                            {panoramas.map((pano, idx) => (
+                                                <div key={idx} className="flex items-center gap-3 p-3 bg-card border rounded-lg group hover:border-qal-primary/30 transition-all">
+                                                    <div className="h-10 w-16 bg-muted rounded overflow-hidden flex-shrink-0">
+                                                        <img src={pano.url} className="h-full w-full object-cover" alt="" />
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-medium text-sm truncate">{pano.title}</p>
+                                                        <p className="text-xs text-muted-foreground truncate">{pano.url}</p>
+                                                    </div>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-muted-foreground hover:text-red-500"
+                                                        onClick={() => removePanorama(idx)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     </div>

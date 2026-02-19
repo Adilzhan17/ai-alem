@@ -63,6 +63,58 @@ class ListingOut(BaseModel):
     address: Optional[str]
     price_kzt: float
     rooms: Optional[int]
+
+router = APIRouter()
+
+
+# ──────────────── Schemas ────────────────
+class ListingCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    city: str
+    district: Optional[str] = None
+    residential_complex: Optional[str] = None
+    address: Optional[str] = None
+    price_kzt: float
+    rooms: Optional[int] = None
+    area_sqm: Optional[float] = None
+    floor: Optional[int] = None
+    total_floors: Optional[int] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    image_url: Optional[str] = None
+    images_json: Optional[list] = None
+    metadata_json: Optional[dict] = None
+
+class ListingUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    city: Optional[str] = None
+    district: Optional[str] = None
+    residential_complex: Optional[str] = None
+    address: Optional[str] = None
+    price_kzt: Optional[float] = None
+    rooms: Optional[int] = None
+    area_sqm: Optional[float] = None
+    floor: Optional[int] = None
+    total_floors: Optional[int] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    image_url: Optional[str] = None
+    images_json: Optional[list] = None
+    metadata_json: Optional[dict] = None
+
+class ListingOut(BaseModel):
+    id: int
+    owner_id: int
+    title: str
+    description: Optional[str]
+    city: str
+    district: Optional[str]
+    residential_complex: Optional[str]
+    address: Optional[str]
+    price_kzt: float
+    rooms: Optional[int]
     area_sqm: Optional[float]
     floor: Optional[int]
     total_floors: Optional[int]
@@ -70,6 +122,7 @@ class ListingOut(BaseModel):
     longitude: Optional[float]
     image_url: Optional[str]
     images_json: Optional[list]
+    metadata_json: Optional[dict]
     status: str
     moderation_comment: Optional[str]
     created_at: Optional[str]
@@ -99,6 +152,7 @@ def _listing_to_out(l: Listing) -> dict:
         "longitude": l.longitude,
         "image_url": l.image_url,
         "images_json": l.images_json,
+        "metadata_json": l.metadata_json,
         "status": l.status,
         "moderation_comment": l.moderation_comment,
         "created_at": l.created_at.isoformat() if l.created_at else None,
@@ -131,6 +185,7 @@ def create_listing(
         longitude=data.longitude,
         image_url=data.image_url,
         images_json=data.images_json,
+        metadata_json=data.metadata_json,
         status="draft",
     )
     db.add(listing)

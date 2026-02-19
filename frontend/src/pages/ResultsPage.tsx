@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import { useLanguage } from '../LanguageContext'
 import MapComponent from '../components/MapComponent'
+import PanoramaViewer, { PanoramaScene } from '../components/PanoramaViewer'
 
 export default function ResultsPage() {
     const location = useLocation()
@@ -102,12 +103,28 @@ export default function ResultsPage() {
                             </button>
                         </div>
                         <div className="flex-1 bg-black relative">
-                            <iframe
-                                title="3D Viewer"
-                                src="https://sketchfab.com/models/50c8e0300401449080277344933a3915/embed?autostart=1&ui_controls=1&ui_infos=0&ui_inspector=0&ui_stop=0&ui_watermark=0&ui_watermark_link=0"
-                                className="size-full border-0"
-                                allow="autoplay; fullscreen; vr"
-                            />
+                            {(() => {
+                                const panoramas = selectedProperty?.metadata_json?.panoramas as { url: string, title: string }[] | undefined;
+                                
+                                if (panoramas && panoramas.length > 0) {
+                                  const scenes: PanoramaScene[] = panoramas.map((p, i) => ({
+                                      id: `scene-${i}`,
+                                      title: p.title,
+                                      image_url: p.url
+                                  }));
+                                  return <PanoramaViewer scenes={scenes} height="100%" />;
+                                }
+
+                                if (selectedProperty?.image_url) {
+                                    return <PanoramaViewer scenes={[{
+                                        id: 'main',
+                                        title: 'Main View',
+                                        image_url: selectedProperty.image_url
+                                    }]} height="100%" />;
+                                }
+
+                                return <div className="flex items-center justify-center text-white h-full">No panorama available</div>;
+                            })()}
                         </div>
                     </div>
                 </div>

@@ -75,8 +75,17 @@ export default function CreateListingPage() {
     const set = (key: string, val: string) => setForm(f => ({ ...f, [key]: val }))
 
     const handleSubmit = async (isDraft: boolean) => {
-        if (!form.title || !form.price_kzt || !form.area_sqm) {
+        console.log('Submitting form:', { isDraft, form });
+        
+        // Only validate required fields if submitting for review
+        if (!isDraft && (!form.title || !form.price_kzt || !form.area_sqm)) {
             toast.error("Please fill in all required fields marked with *");
+            return;
+        }
+
+        // For draft, at least title is required to identify it
+        if (isDraft && !form.title) {
+            toast.error("Please provide at least a title for the draft");
             return;
         }
 

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import { useLanguage } from '../LanguageContext'
 import MapComponent from '../components/MapComponent'
-import PanoramaViewer, { PanoramaScene } from '../components/PanoramaViewer'
+import PanoramaViewer, { type PanoramaScene } from '../components/PanoramaViewer'
 
 export default function ResultsPage() {
     const location = useLocation()

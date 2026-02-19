@@ -1,0 +1,19 @@
+{
+    "include": [
+        "app",
+        "seed.py"
+    ],
+    "exclude": [
+        "**/__pycache__",
+        "venv"
+    ],
+    "venvPath": ".",
+    "venv": "venv",
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "pythonVersion": "3.13",
+    "extraPaths": [
+        "."
+    ],
+    "typeCheckingMode": "off"
+}

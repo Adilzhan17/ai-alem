@@ -43,6 +43,9 @@ jobs:
             echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> backend/.env
             echo "PROJECT_NAME=AI Real Estate Kazakhstan" >> backend/.env
 
+            # Export variable for docker-compose interpolation
+            export OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+
             # Start services
             docker compose down --remove-orphans || true
             docker compose up -d --build

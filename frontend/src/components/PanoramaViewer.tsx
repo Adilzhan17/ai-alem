@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 // @ts-ignore
-import { viewer } from 'pannellum';
+import pannellum from 'pannellum';
 import 'pannellum/build/pannellum.css';
 
 export interface PanoramaScene {
@@ -62,7 +62,7 @@ export default function PanoramaViewer({ scenes, initialSceneId, height = "500px
 
         try {
             // @ts-ignore
-            viewerRef.current = window.pannellum?.viewer(containerRef.current, config) || viewer(containerRef.current, config);
+            viewerRef.current = pannellum.viewer(containerRef.current, config);
         } catch (err) {
             console.error("Failed to init pannellum", err);
         }

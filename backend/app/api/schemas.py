@@ -28,4 +28,3 @@ class OptimizationResponse(BaseModel):
     structured_query: StructuredSearchSchema
     clarification_question: Optional[str] = None
     results: List[SearchResultItem] = []
-#секс

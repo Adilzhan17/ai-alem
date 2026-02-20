@@ -1,6 +1,7 @@
 import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
+import LandingPage from './pages/LandingPage.tsx'
 import SearchPage from './pages/SearchPage.tsx'
 import ResultsPage from './pages/ResultsPage.tsx'
 import DashboardPage from './pages/DashboardPage.tsx'
@@ -28,52 +29,81 @@ import BackofficeAudit from './pages/backoffice/BackofficeAudit.tsx'
 import BackofficeListings from './pages/backoffice/BackofficeListings.tsx'
 import BackofficeComplaints from './pages/backoffice/BackofficeComplaints.tsx'
 
+const LoadingScreen = () => (
+  <div className="flex h-screen items-center justify-center bg-qal-bg text-qal-text-secondary">
+    Loading session...
+  </div>
+)
+
+const getHomeRouteByRole = (role?: 'client' | 'contractor' | 'supplier-materials') => {
+  if (role === 'contractor') return '/contractor'
+  if (role === 'supplier-materials') return '/supplier'
+  return '/dashboard'
+}
+
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
 
-  if (isLoading) return <div className="h-screen bg-qal-bg flex items-center justify-center text-qal-text-secondary">Loading session...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (isLoading) return <LoadingScreen />
+  if (!isAuthenticated) {
+    const from = `${location.pathname}${location.search}${location.hash}`
+    return <Navigate to="/login" state={{ from }} replace />
+  }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth()
+  const location = useLocation()
 
-  if (isLoading) return <div className="h-screen bg-qal-bg flex items-center justify-center text-qal-text-secondary">Loading session...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  if (isLoading) return <LoadingScreen />
+  if (!isAuthenticated) {
+    const from = `${location.pathname}${location.search}${location.hash}`
+    return <Navigate to="/login" state={{ from }} replace />
+  }
   if (!user?.system_role || !['admin', 'moderator'].includes(user.system_role)) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />
   }
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
 const RoleRoute = ({ children, allowed }: { children: React.ReactNode, allowed: Array<'client' | 'contractor' | 'supplier-materials'> }) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  if (isLoading) return <div className="h-screen bg-qal-bg flex items-center justify-center text-qal-text-secondary">Loading session...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" />;
-  if (!user?.role || !allowed.includes(user.role)) {
-    return <Navigate to="/" replace />;
+  const { isAuthenticated, isLoading, user } = useAuth()
+  const location = useLocation()
+  if (isLoading) return <LoadingScreen />
+  if (!isAuthenticated) {
+    const from = `${location.pathname}${location.search}${location.hash}`
+    return <Navigate to="/login" state={{ from }} replace />
   }
-  return <>{children}</>;
-};
+  if (!user?.role || !allowed.includes(user.role)) {
+    return <Navigate to={getHomeRouteByRole(user?.role)} replace />
+  }
+  return <>{children}</>
+}
 
 const RoleHome = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  if (isLoading) return <div className="h-screen bg-qal-bg flex items-center justify-center text-qal-text-secondary">Loading session...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" />;
-  if (user?.role === 'contractor') return <ContractorDashboardPage />;
-  if (user?.role === 'supplier-materials') return <SupplierDashboardPage />;
-  return <DashboardPage />;
-};
+  const { isAuthenticated, isLoading, user } = useAuth()
+  if (isLoading) return <LoadingScreen />
+  if (!isAuthenticated) return <LandingPage />
+  return <Navigate to={getHomeRouteByRole(user?.role)} replace />
+}
+
+const AuthPageRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading, user } = useAuth()
+  if (isLoading) return <LoadingScreen />
+  if (isAuthenticated) return <Navigate to={getHomeRouteByRole(user?.role)} replace />
+  return <>{children}</>
+}
 
 export default function App() {
   return (
     <Routes>
       {/* Auth */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/login" element={<AuthPageRoute><LoginPage /></AuthPageRoute>} />
+      <Route path="/register" element={<AuthPageRoute><RegisterPage /></AuthPageRoute>} />
 
       {/* Pages */}
       <Route path="/" element={<RoleHome />} />

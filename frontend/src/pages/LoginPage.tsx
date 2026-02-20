@@ -1,166 +1,188 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
+import { useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../AuthContext'
+
+type UserRole = 'client' | 'contractor' | 'supplier-materials'
+
+const roleOptions: Array<{ id: UserRole; label: string; icon: string }> = [
+  { id: 'client', label: 'Клиент', icon: 'person' },
+  { id: 'contractor', label: 'Подрядчик', icon: 'engineering' },
+  { id: 'supplier-materials', label: 'Поставщик', icon: 'inventory_2' }
+]
+
+const getHomeRouteByRole = (role?: UserRole) => {
+  if (role === 'contractor') return '/contractor'
+  if (role === 'supplier-materials') return '/supplier'
+  return '/dashboard'
+}
 
 export default function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [role, setRole] = useState<'client' | 'contractor' | 'supplier-materials'>('client');
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const { login, logout } = useAuth();
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [role, setRole] = useState<UserRole>('client')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setError('');
+  const { login, logout } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = useMemo(() => {
+    const state = location.state as { from?: string } | undefined
+    if (!state?.from || state.from === '/login' || state.from === '/register') return ''
+    return state.from
+  }, [location.state])
 
-        try {
-            const formData = new FormData();
-            formData.append('username', email);
-            formData.append('password', password);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
-            const res = await fetch('/api/v1/auth/login', {
-                method: 'POST',
-                body: formData
-            });
+    try {
+      const formData = new FormData()
+      formData.append('username', email)
+      formData.append('password', password)
 
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.detail || 'Неверные данные');
-            }
+      const res = await fetch('/api/v1/auth/login', {
+        method: 'POST',
+        body: formData
+      })
 
-            const data = await res.json();
-            login(data.access_token, data.user);
-            if (data.user?.role && data.user.role !== role) {
-                logout();
-                throw new Error(`Ваша роль в системе: ${data.user.role}. Вы выбрали: ${role}.`);
-            }
-            if (data.user?.role === 'contractor') navigate('/contractor');
-            else if (data.user?.role === 'supplier-materials') navigate('/supplier');
-            else navigate('/');
-        } catch (err: any) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.detail || 'Неверные данные для входа')
+      }
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-qal-bg p-6 relative overflow-hidden">
-            {/* Background Gradients */}
-            <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-qal-primary/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-qal-primary/5 blur-[100px] rounded-full pointer-events-none" />
+      const data = await res.json()
+      login(data.access_token, data.user)
 
-            <div className="max-w-md w-full animate-in fade-in zoom-in-95 duration-700">
-                {/* Logo Area */}
-                <div className="flex flex-col items-center mb-10">
-                    <div className="size-16 rounded-2xl bg-gradient-to-br from-qal-primary to-qal-primary-light shadow-lg shadow-qal-primary/20 flex items-center justify-center text-white mb-4 rotate-[-6deg]">
-                        <span className="material-symbols-outlined text-4xl">token</span>
-                    </div>
-                    <h1 className="text-2xl font-black text-qal-text-primary tracking-widest uppercase">Qal.<span className="text-qal-primary">ai</span></h1>
-                    <p className="text-qal-text-secondary text-[10px] font-black uppercase tracking-[0.4em] mt-2 text-center opacity-60">AI platform for real estate and construction decisions</p>
-                </div>
+      if (data.user?.role && data.user.role !== role) {
+        logout()
+        throw new Error(`Ваша роль: ${data.user.role}. Вы выбрали: ${role}.`)
+      }
 
-                <div className="bg-qal-surface border border-qal-border rounded-[2.5rem] p-12 shadow-sm relative overflow-hidden backdrop-blur-xl">
-                    <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none text-qal-primary">
-                        <span className="material-symbols-outlined text-[120px]">security</span>
-                    </div>
+      navigate(from || getHomeRouteByRole(data.user?.role), { replace: true })
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-                    <div className="mb-10 text-center">
-                        <h2 className="text-3xl font-black text-qal-text-primary tracking-tight mb-2">Авторизация</h2>
-                        <p className="text-qal-text-secondary text-sm font-bold opacity-60">Безопасный доступ к вашей экосистеме</p>
-                    </div>
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-[#f7fafc] px-6 py-8 text-slate-900">
+      <div className="magic-grid absolute inset-0 opacity-70" />
+      <div className="magic-orb absolute -left-20 top-0 h-80 w-80 rounded-full bg-cyan-300/40" />
+      <div className="magic-orb absolute -right-16 bottom-0 h-96 w-96 rounded-full bg-blue-300/35" />
 
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-600 p-4 rounded-2xl mb-8 text-xs font-bold flex items-center gap-3 animate-in shake duration-500">
-                            <span className="material-symbols-outlined text-sm">warning</span>
-                            {error}
-                        </div>
-                    )}
+      <div className="relative z-10 mx-auto w-full max-w-6xl">
+        <header className="mx-auto mb-10 flex max-w-5xl items-center justify-between gap-4">
+          <Link to="/" className="font-['Sora'] text-xl font-semibold tracking-tight">
+            Qal<span className="text-cyan-600">.ai</span>
+          </Link>
+          <Link
+            to="/register"
+            className="rounded-xl border border-slate-300/70 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-400 hover:text-cyan-700"
+          >
+            Создать аккаунт
+          </Link>
+        </header>
 
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div className="space-y-2">
-                            <label className="block text-[10px] font-black text-qal-text-secondary uppercase tracking-[0.2em] px-2 opacity-60">Ваша роль</label>
-                            <div className="grid grid-cols-3 gap-2 p-2 bg-qal-bg rounded-2xl border border-qal-border shadow-inner">
-                                {[
-                                    { id: 'client', label: 'Клиент', icon: 'person' },
-                                    { id: 'contractor', label: 'Подрядчик', icon: 'engineering' },
-                                    { id: 'supplier-materials', label: 'Поставщик', icon: 'inventory_2' }
-                                ].map(r => (
-                                    <button
-                                        key={r.id}
-                                        type="button"
-                                        onClick={() => setRole(r.id as any)}
-                                        className={`flex flex-col items-center gap-2 py-3 px-2 rounded-xl transition-all ${role === r.id ? 'bg-qal-primary text-white shadow-lg scale-[1.02]' : 'text-qal-text-secondary opacity-60 hover:opacity-100 hover:bg-qal-primary/5'}`}
-                                    >
-                                        <span className="material-symbols-outlined text-lg">{r.icon}</span>
-                                        <span className="text-[9px] font-black uppercase tracking-wider">{r.label}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="block text-[10px] font-black text-qal-text-secondary uppercase tracking-[0.2em] px-2 opacity-60">Email</label>
-                            <div className="relative group">
-                                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-qal-text-secondary opacity-40 group-focus-within:opacity-100 group-focus-within:text-qal-primary transition-all">mail</span>
-                                <input
-                                    type="email"
-                                    required
-                                    className="w-full bg-qal-bg border border-qal-border rounded-2xl pl-12 pr-6 py-4 text-qal-text-primary focus:outline-none focus:border-qal-primary/50 transition-all text-sm font-bold shadow-inner"
-                                    placeholder="your@email.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-end px-2">
-                                <label className="block text-[10px] font-black text-qal-text-secondary uppercase tracking-[0.2em] opacity-60">Пароль</label>
-                                <a href="#" className="text-[10px] font-bold text-qal-primary/60 hover:text-qal-primary transition-colors">Забыли?</a>
-                            </div>
-                            <div className="relative group">
-                                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-qal-text-secondary opacity-40 group-focus-within:opacity-100 group-focus-within:text-qal-primary transition-all">lock</span>
-                                <input
-                                    type="password"
-                                    required
-                                    className="w-full bg-qal-bg border border-qal-border rounded-2xl pl-12 pr-6 py-4 text-qal-text-primary focus:outline-none focus:border-qal-primary/50 transition-all text-sm font-bold shadow-inner"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full bg-qal-primary hover:bg-qal-primary-dark text-white font-black py-5 rounded-2xl shadow-lg shadow-qal-primary/20 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-3 group"
-                        >
-                            {isLoading ? (
-                                <div className="size-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                            ) : (
-                                <>
-                                    <span>Войти в систему</span>
-                                    <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                                </>
-                            )}
-                        </button>
-                    </form>
+        <main className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <section className="magic-card rounded-3xl p-7 md:p-10">
+            <p className="inline-flex items-center gap-2 rounded-full border border-cyan-300/70 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-800">
+              <span className="inline-block h-2 w-2 rounded-full bg-cyan-500" />
+              Secure access
+            </p>
 
-                    <div className="mt-12 pt-8 border-t border-qal-border text-center">
-                        <p className="text-qal-text-secondary text-xs font-bold opacity-60">
-                            Новый пользователь? <Link to="/register" className="text-qal-primary hover:text-qal-primary-dark font-black ml-1 transition-colors underline-offset-4 hover:underline">Создать учетную запись</Link>
-                        </p>
-                    </div>
-                </div>
+            <h1 className="mt-5 font-['Sora'] text-3xl font-semibold leading-tight md:text-5xl">
+              Вход в экосистему
+              <span className="magic-gradient-text block bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 bg-clip-text text-transparent">
+                Qal.ai
+              </span>
+            </h1>
 
-                <div className="mt-10 flex items-center justify-center gap-6 opacity-30 grayscale hover:grayscale-0 transition-all pointer-events-none">
-                    <span className="text-[10px] font-black text-qal-text-secondary uppercase tracking-widest flex items-center gap-1.5"><span className="material-symbols-outlined text-sm">shield</span> SSL Encrypted</span>
-                    <div className="size-1 bg-qal-border rounded-full" />
-                    <span className="text-[10px] font-black text-qal-text-secondary uppercase tracking-widest flex items-center gap-1.5"><span className="material-symbols-outlined text-sm">verified_user</span> ISO 27001</span>
-                </div>
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-600 md:text-base">
+              После входа мы вернем вас к сценарию, который вы выбрали на гостевой странице.
+            </p>
+
+            {from && (
+              <div className="mt-6 rounded-2xl border border-cyan-300/80 bg-cyan-50 px-4 py-3 text-sm text-cyan-900">
+                Продолжим с маршрута: <span className="font-semibold">{from}</span>
+              </div>
+            )}
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              {roleOptions.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setRole(option.id)}
+                  className={`rounded-2xl border px-3 py-3 text-center transition ${
+                    role === option.id
+                      ? 'border-slate-900 bg-slate-900 text-white'
+                      : 'border-slate-200 bg-white text-slate-700 hover:border-cyan-400 hover:text-cyan-700'
+                  }`}
+                >
+                  <span className="material-symbols-outlined mb-1 block text-[20px]">{option.icon}</span>
+                  <span className="text-xs font-semibold">{option.label}</span>
+                </button>
+              ))}
             </div>
-        </div>
-    );
+          </section>
+
+          <section className="magic-card rounded-3xl p-7 md:p-9">
+            <h2 className="font-['Sora'] text-2xl font-semibold tracking-tight">Авторизация</h2>
+            <p className="mt-2 text-sm text-slate-600">Введите данные аккаунта для продолжения.</p>
+
+            {error && (
+              <div className="mt-5 rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Email</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"
+                  placeholder="you@example.com"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Пароль</label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"
+                  placeholder="••••••••"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isLoading ? 'Входим...' : 'Войти'}
+              </button>
+            </form>
+
+            <p className="mt-6 text-sm text-slate-600">
+              Нет аккаунта?{' '}
+              <Link to="/register" className="font-semibold text-cyan-700 hover:text-cyan-800">
+                Зарегистрироваться
+              </Link>
+            </p>
+          </section>
+        </main>
+      </div>
+    </div>
+  )
 }

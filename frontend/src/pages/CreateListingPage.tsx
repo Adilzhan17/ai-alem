@@ -35,6 +35,10 @@ import ImageUpload from '../components/ImageUpload'
 
 const API = '/api/v1'
 
+import LocationPicker from '../components/LocationPicker'
+
+// ... existing code ...
+
 const CITIES = ['Astana', 'Almaty', 'Shymkent', 'Karaganda', 'Aktobe', 'Taraz', 'Pavlodar', 'Ust-Kamenogorsk', 'Semey', 'Atyrau', 'Kostanay', 'Kyzylorda', 'Uralsk', 'Aktau', 'Petropavlovsk', 'Temirtau', 'Taldykorgan', 'Ekibastuz', 'Rudny', 'Zhezkazgan']
 
 export default function CreateListingPage() {
@@ -55,6 +59,8 @@ export default function CreateListingPage() {
         floor: '',
         total_floors: '',
         image_url: '',
+        latitude: null as number | null,
+        longitude: null as number | null,
     })
 
     const [panoramas, setPanoramas] = useState<{ url: string, title: string }[]>([])
@@ -98,6 +104,8 @@ export default function CreateListingPage() {
                 headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...form,
+                    latitude: form.latitude,
+                    longitude: form.longitude,
                     price_kzt: parseFloat(form.price_kzt) || 0,
                     rooms: parseInt(form.rooms) || 0,
                     area_sqm: parseFloat(form.area_sqm) || 0,
@@ -228,13 +236,28 @@ export default function CreateListingPage() {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="address">Address</Label>
-                                        <Input
-                                            id="address"
-                                            placeholder="e.g. Dostyk Ave, 12"
-                                            value={form.address}
-                                            onChange={e => set('address', e.target.value)}
-                                        />
+                                        <Label htmlFor="address">Address & Location <span className="text-red-500">*</span></Label>
+                                        <div className="space-y-2">
+                                            <LocationPicker 
+                                                defaultValue={form.address}
+                                                onLocationSelect={(loc) => {
+                                                    setForm(prev => ({
+                                                        ...prev,
+                                                        address: loc.display_name.split(',')[0] + (loc.address.house_number ? ', ' + loc.address.house_number : ''),
+                                                        city: loc.address.city || loc.address.town || loc.address.village || prev.city,
+                                                        district: loc.address.suburb || loc.address.city_district || loc.address.district || prev.district,
+                                                        latitude: loc.lat,
+                                                        longitude: loc.lon
+                                                    }))
+                                                }}
+                                            />
+                                            {form.latitude && form.longitude && (
+                                                <div className="text-xs text-green-600 flex items-center gap-1">
+                                                    <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                                                    Coordinates set: {form.latitude.toFixed(6)}, {form.longitude.toFixed(6)}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </CardContent>

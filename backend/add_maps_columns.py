@@ -1,6 +1,6 @@
 
 import logging
-from sqlalchemy import text
+from sqlalchemy import text, inspect
 from app.db.base import engine
 
 logging.basicConfig(level=logging.INFO)
@@ -9,34 +9,36 @@ logger = logging.getLogger(__name__)
 def migrate_db():
     """
     Manually add latitude and longitude columns to the listings table.
-    This is required because existing tables are not updated by create_all.
+    Checks if columns exist before attempting to add them to avoid transaction errors.
     """
     logger.info("Starting manual migration for maps...")
     
+    inspector = inspect(engine)
+    columns = [c['name'] for c in inspector.get_columns('listings')]
+    
     with engine.connect() as conn:
         # 1. Add Latitude
-        try:
-            logger.info("Attempting to add 'latitude' column...")
-            conn.execute(text("ALTER TABLE listings ADD COLUMN latitude FLOAT"))
-            logger.info("✅ 'latitude' column added successfully.")
-        except Exception as e:
-            # Postgres error code 42701 is "duplicate_column"
-            if "duplicate column" in str(e) or "already exists" in str(e):
-                 logger.info("⚠️ 'latitude' column already exists. Skipping.")
-            else:
+        if 'latitude' not in columns:
+            try:
+                logger.info("Adding 'latitude' column...")
+                conn.execute(text("ALTER TABLE listings ADD COLUMN latitude FLOAT"))
+                logger.info("✅ 'latitude' added.")
+            except Exception as e:
                 logger.error(f"❌ Failed to add 'latitude': {e}")
+        else:
+            logger.info("ℹ️ 'latitude' already exists.")
 
         # 2. Add Longitude
-        try:
-            logger.info("Attempting to add 'longitude' column...")
-            conn.execute(text("ALTER TABLE listings ADD COLUMN longitude FLOAT"))
-            logger.info("✅ 'longitude' column added successfully.")
-        except Exception as e:
-            if "duplicate column" in str(e) or "already exists" in str(e):
-                 logger.info("⚠️ 'longitude' column already exists. Skipping.")
-            else:
+        if 'longitude' not in columns:
+            try:
+                logger.info("Adding 'longitude' column...")
+                conn.execute(text("ALTER TABLE listings ADD COLUMN longitude FLOAT"))
+                logger.info("✅ 'longitude' added.")
+            except Exception as e:
                 logger.error(f"❌ Failed to add 'longitude': {e}")
-        
+        else:
+            logger.info("ℹ️ 'longitude' already exists.")
+            
         conn.commit()
     
     logger.info("Migration check complete.")

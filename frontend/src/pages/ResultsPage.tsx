@@ -165,28 +165,30 @@ export default function ResultsPage() {
                                 <div
                                     key={p.id}
                                     onClick={() => setSelectedId(p.id)}
-                                    className={`group relative p-4 rounded-2xl border transition-all cursor-pointer ${selectedId === p.id ? 'bg-qal-primary/5 border-qal-primary/30 shadow-sm' : 'bg-qal-surface border-qal-border hover:border-qal-text-secondary/30 hover:bg-qal-bg/50'}`}
+                                    className={`group relative p-3 rounded-2xl border transition-all cursor-pointer ${selectedId === p.id ? 'bg-white border-qal-primary ring-1 ring-qal-primary shadow-md' : 'bg-white border-gray-100 hover:border-gray-300 hover:shadow-lg'}`}
                                 >
                                     <div className="flex gap-4">
-                                        <div className="size-20 shrink-0 rounded-xl overflow-hidden border border-qal-border shadow-inner">
-                                            <img src={p.image_url} alt="" className="size-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        <div className="w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-100 relative">
+                                            <img src={p.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/50 backdrop-blur-md rounded text-[9px] font-bold text-white">
+                                                {p.match_score}% match
+                                            </div>
                                         </div>
-                                        <div className="flex-1 min-w-0 flex flex-col">
-                                            <div className="flex justify-between items-start gap-2 mb-1">
-                                                <h4 className={`text-sm font-bold truncate ${selectedId === p.id ? 'text-qal-primary' : 'text-qal-text-primary'}`}>{p.title}</h4>
-                                                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold border ${p.match_score > 90 ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-qal-primary/10 text-qal-primary border-qal-primary/20'}`}>
-                                                    {p.match_score}%
-                                                </span>
+                                        <div className="flex-1 min-w-0 flex flex-col justify-between py-1">
+                                            <div>
+                                                <div className="flex justify-between items-start mb-1">
+                                                    <h4 className={`text-sm font-semibold truncate pr-2 ${selectedId === p.id ? 'text-gray-900' : 'text-gray-700'}`}>{p.title}</h4>
+                                                    <span className="text-[10px] text-gray-400 shrink-0">{p.rooms} bd</span>
+                                                </div>
+                                                <div className="flex items-center gap-1 text-gray-500 mb-2">
+                                                    <span className="material-symbols-outlined text-[14px]">location_on</span>
+                                                    <span className="text-xs truncate">{p.district}</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-1.5 text-qal-text-secondary mb-2">
-                                                <span className="material-symbols-outlined text-xs">location_on</span>
-                                                <span className="text-[11px] font-medium truncate italic">{p.district}</span>
-                                            </div>
-                                            <div className="mt-auto flex items-end justify-between">
-                                                <span className="text-base font-black text-qal-text-primary leading-tight">₸{(p.price / 1000000).toFixed(1)}M</span>
-                                                <div className="flex gap-2">
-                                                    <span className="text-[10px] font-bold text-qal-text-secondary bg-qal-bg/50 px-2 py-0.5 rounded border border-qal-border">{p.rooms} спальни</span>
-                                                    <span className="text-[10px] font-bold text-qal-text-secondary bg-qal-bg/50 px-2 py-0.5 rounded border border-qal-border">{p.area}м²</span>
+                                            <div className="flex items-baseline justify-between">
+                                                <span className="text-lg font-bold text-gray-900">₸{(p.price / 1000000).toFixed(1)}M</span>
+                                                <div className="text-xs text-gray-500 font-medium bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                                                    {p.area} m²
                                                 </div>
                                             </div>
                                         </div>
@@ -225,39 +227,78 @@ export default function ResultsPage() {
                         ) : (
                             <div className="size-full overflow-y-auto p-12 custom-scrollbar animate-in fade-in duration-500">
                                 {selectedProperty ? (
-                                    <div className="max-w-4xl mx-auto space-y-12 pb-24">
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 rounded-full w-fit text-[10px] font-bold uppercase tracking-widest">
-                                                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                                Доступен для сделки
-                                            </div>
-                                            <h2 className="text-5xl font-black text-qal-text-primary leading-tight">{selectedProperty.title}</h2>
-                                            <div className="flex items-center gap-4 text-qal-text-secondary font-medium">
-                                                <span className="flex items-center gap-1.5"><span className="material-symbols-outlined text-qal-primary">location_on</span> {selectedProperty.district}</span>
+                                    <div className="max-w-5xl mx-auto pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        <div className="relative h-[400px] w-full rounded-b-3xl overflow-hidden shadow-2xl mb-8 group">
+                                            <img src={selectedProperty.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                            <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end">
+                                                <div>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-full">Available</span>
+                                                        <span className="px-2 py-0.5 bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full border border-white/30">{selectedProperty.match_score}% Match</span>
+                                                    </div>
+                                                    <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-1 shadow-black/50 drop-shadow-lg">{selectedProperty.title}</h2>
+                                                    <p className="text-white/80 font-medium flex items-center gap-1">
+                                                        <span className="material-symbols-outlined text-sm">location_on</span>
+                                                        {selectedProperty.district}
+                                                    </p>
+                                                </div>
+                                                <button onClick={() => setShow3D(true)} className="px-6 py-2.5 bg-white/10 backdrop-blur-md hover:bg-white text-white hover:text-black rounded-full text-sm font-bold transition-all border border-white/30 flex items-center gap-2">
+                                                    <span className="material-symbols-outlined">view_in_ar</span>
+                                                    3D Tour
+                                                </button>
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-3 gap-8">
-                                            <div className="aspect-[4/3] col-span-2 rounded-3xl overflow-hidden shadow-xl border border-qal-border relative group">
-                                                <img src={selectedProperty.image_url} alt="" className="size-full object-cover" />
-                                                <div className="absolute inset-0 bg-qal-text-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                    <button onClick={() => setShow3D(true)} className="px-8 py-3 bg-white text-qal-text-primary hover:bg-qal-bg rounded-full text-sm font-bold shadow-2xl transition-all active:scale-95 flex items-center gap-2">
-                                                        <span className="material-symbols-outlined">view_in_ar</span>
-                                                        Смотреть 3D Тур
-                                                    </button>
+                                        <div className="px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                            <div className="lg:col-span-2 space-y-8">
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center hover:border-qal-primary/30 transition-colors">
+                                                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Price</span>
+                                                        <span className="text-xl font-bold text-gray-900">₸{(selectedProperty.price / 1000000).toFixed(1)}M</span>
+                                                    </div>
+                                                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center hover:border-qal-primary/30 transition-colors">
+                                                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Area</span>
+                                                        <span className="text-xl font-bold text-gray-900">{selectedProperty.area} m²</span>
+                                                    </div>
+                                                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center hover:border-qal-primary/30 transition-colors">
+                                                        <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Rooms</span>
+                                                        <span className="text-xl font-bold text-gray-900">{selectedProperty.rooms}</span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                                                    <h3 className="text-lg font-bold text-gray-900 mb-4">Description</h3>
+                                                    <p className="text-gray-600 leading-relaxed">
+                                                        {selectedProperty.description || "No description available for this property."}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col gap-6">
-                                                <div className="bg-qal-surface p-8 rounded-3xl border border-qal-border flex flex-col gap-8 shadow-sm">
-                                                    <div>
-                                                        <span className="text-qal-text-secondary text-xs font-bold uppercase tracking-widest block mb-1">Оценочная стоимость</span>
-                                                        <span className="text-4xl font-black text-qal-text-primary">₸{(selectedProperty.price / 1000000).toFixed(1)} млн</span>
+
+                                            <div className="flex flex-col gap-4">
+                                                <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                                                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                                                        <span className="material-symbols-outlined text-9xl">rocket_launch</span>
                                                     </div>
-                                                    <button className="w-full py-4 bg-qal-primary hover:bg-qal-primary-dark text-white font-bold rounded-2xl shadow-lg shadow-qal-primary/20 transition-all active:scale-95 flex items-center justify-center gap-3" onClick={() => navigate('/estimate', { state: { geometry: { total_area: selectedProperty.area } } })}>
-                                                        <span className="material-symbols-outlined">rocket_launch</span>
-                                                        Рассчитать смету
+                                                    <h3 className="text-lg font-bold mb-1 relative z-10">AI Estimate</h3>
+                                                    <p className="text-white/60 text-sm mb-6 relative z-10">Get a detailed renovation estimate for this property instantly.</p>
+                                                    <div className="mb-6 relative z-10">
+                                                        <span className="text-3xl font-bold">₸42.0 M</span>
+                                                        <span className="text-white/40 text-xs block">Estimated cost</span>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => navigate('/estimate', { state: { geometry: { total_area: selectedProperty.area } } })}
+                                                        className="w-full py-3 bg-white text-gray-900 font-bold rounded-xl hover:bg-gray-100 transition-colors relative z-10 flex items-center justify-center gap-2"
+                                                    >
+                                                        <span className="material-symbols-outlined text-lg">calculate</span>
+                                                        Calculate Now
                                                     </button>
                                                 </div>
+
+                                                <button className="w-full py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                                                    <span className="material-symbols-outlined">call</span>
+                                                    Contact Agent
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

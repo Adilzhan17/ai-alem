@@ -34,7 +34,7 @@ export default function ResultsPage() {
         if (!state?.results?.results) {
             setLoading(true)
             const token = localStorage.getItem('auth_token')
-            fetch('/api/v1/search', {
+            fetch('/api/v1/search/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

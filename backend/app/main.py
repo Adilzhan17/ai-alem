@@ -18,6 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Trust forwarded headers from Nginx/Cloudflare (HTTPS)
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts="*")
+
 @app.get("/")
 def read_root():
     return {"message": "Qal.ai API v1.0 — Production Ready"}

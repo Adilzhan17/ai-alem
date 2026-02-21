@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -130,8 +130,31 @@
     color: var(--foreground);
     margin: 0;
     padding: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Manrope', sans-serif;
     overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Sora', sans-serif;
+  }
+}
+
+@keyframes magic-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+@keyframes magic-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
   }
 }
 
@@ -161,5 +184,27 @@
 
   .glass-card {
     @apply bg-card/80 backdrop-blur-xl border border-border shadow-sm;
+  }
+
+  .magic-grid {
+    background-image:
+      linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(circle at center, black 35%, transparent 85%);
+  }
+
+  .magic-card {
+    @apply border border-white/80 bg-white/70 shadow-[0_24px_60px_-28px_rgba(15,23,42,0.45)] backdrop-blur-xl;
+  }
+
+  .magic-orb {
+    filter: blur(72px);
+    animation: magic-float 12s ease-in-out infinite;
+  }
+
+  .magic-gradient-text {
+    background-size: 180% 180%;
+    animation: magic-shift 5s ease infinite alternate;
   }
 }

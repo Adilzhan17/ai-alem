@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
+import './styles/app-shell.css'
 import App from './App'
 import { LanguageProvider } from './LanguageContext'
 import { AuthProvider } from './AuthContext'
@@ -13,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <LanguageProvider>
           <App />
-          {/* <Toaster /> */}
+          <Toaster />
         </LanguageProvider>
       </AuthProvider>
     </BrowserRouter>

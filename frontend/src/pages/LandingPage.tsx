@@ -28,6 +28,29 @@ const featureCards = [
   }
 ]
 
+const entryCards = [
+  {
+    title: 'Гость',
+    description: 'Открытый просмотр витрины и модулей без регистрации.',
+    icon: 'travel_explore',
+    mode: 'guest' as const
+  },
+  {
+    title: 'Подрядчик',
+    description: 'Вход в панель подрядчика с заявками и коммерческими предложениями.',
+    icon: 'engineering',
+    route: '/contractor',
+    mode: 'auth' as const
+  },
+  {
+    title: 'Застройщик / Заказчик',
+    description: 'Управление проектами, сметами и подрядчиками в одном кабинете.',
+    icon: 'apartment',
+    route: '/dashboard',
+    mode: 'auth' as const
+  }
+]
+
 export default function LandingPage() {
   const navigate = useNavigate()
   const { isAuthenticated, user, logout } = useAuth()
@@ -40,13 +63,25 @@ export default function LandingPage() {
     navigate('/login', { state: { from: route } })
   }
 
+  const handleEntryCardClick = (card: typeof entryCards[number]) => {
+    if (card.mode === 'guest') {
+      document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+    if (card.route) handleProtectedAction(card.route)
+  }
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f7fafc] text-slate-900">
       <div className="magic-grid absolute inset-0 opacity-70" />
       <div className="magic-orb absolute -left-24 top-0 h-80 w-80 rounded-full bg-cyan-300/50" />
       <div className="magic-orb absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-blue-300/40" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-6 pb-16 pt-6 lg:px-10">
+      <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-4 pb-[calc(7.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 md:pb-16 md:pt-6 lg:px-10">
         <header className="magic-card sticky top-4 z-20 mb-14 flex items-center justify-between gap-4 rounded-2xl px-4 py-3">
           <Link to="/" className="font-['Sora'] text-lg font-semibold tracking-tight">
             Qal<span className="text-cyan-600">.ai</span>
@@ -78,13 +113,13 @@ export default function LandingPage() {
               <>
                 <Link
                   to="/login"
-                  className="rounded-xl border border-slate-300/70 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-400 hover:text-cyan-700"
+                  className="rounded-xl border border-slate-300/70 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-400 hover:text-cyan-700 sm:px-4"
                 >
                   Войти
                 </Link>
                 <Link
                   to="/register"
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+                  className="rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 sm:px-4"
                 >
                   Регистрация
                 </Link>
@@ -163,6 +198,26 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="mt-10 grid gap-4 md:grid-cols-3">
+          {entryCards.map((card) => (
+            <button
+              key={card.title}
+              onClick={() => handleEntryCardClick(card)}
+              className="magic-card group rounded-3xl p-5 text-left transition hover:-translate-y-1 hover:border-cyan-300/80"
+            >
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white">
+                <span className="material-symbols-outlined text-[20px]">{card.icon}</span>
+              </div>
+              <h3 className="font-['Sora'] text-lg font-semibold text-slate-900">{card.title}</h3>
+              <p className="mt-2 text-sm text-slate-600">{card.description}</p>
+              <p className="mt-4 inline-flex items-center text-xs font-semibold uppercase tracking-[0.12em] text-cyan-700">
+                {card.mode === 'guest' ? 'Открыть витрину' : 'Войти в кабинет'}
+                <span className="material-symbols-outlined ml-1 text-[16px] transition group-hover:translate-x-1">arrow_forward</span>
+              </p>
+            </button>
+          ))}
+        </section>
+
         <section id="features" className="mt-20">
           <div className="mb-6">
             <h2 className="font-['Sora'] text-3xl font-semibold tracking-tight">Ключевые модули платформы</h2>
@@ -226,6 +281,54 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
+
+      {!isAuthenticated && (
+        <nav className="fixed inset-x-2 bottom-2 z-40 rounded-3xl border border-slate-700/60 bg-black/92 px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 shadow-2xl shadow-black/40 backdrop-blur md:hidden">
+          <div className="grid grid-cols-5 items-end gap-1 text-white">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="flex flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-semibold text-white/95 transition hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[22px]">home</span>
+              <span>Главная</span>
+            </button>
+
+            <button
+              onClick={() => scrollToSection('features')}
+              className="flex flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-semibold text-white/85 transition hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[22px]">groups</span>
+              <span>Роли</span>
+            </button>
+
+            <button
+              onClick={() => navigate('/register')}
+              className="-mt-4 flex flex-col items-center gap-1"
+            >
+              <span className="rounded-2xl border border-cyan-300/70 bg-white px-4 py-2.5 text-black shadow-[4px_0_0_0_rgba(34,211,238,0.85),-4px_0_0_0_rgba(244,63,94,0.85)] transition hover:scale-105">
+                <span className="material-symbols-outlined text-[24px] font-bold">add</span>
+              </span>
+              <span className="text-[10px] font-semibold text-white/80">Старт</span>
+            </button>
+
+            <button
+              onClick={() => handleProtectedAction('/requests')}
+              className="flex flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-semibold text-white/85 transition hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[22px]">chat_bubble</span>
+              <span>Входящие</span>
+            </button>
+
+            <button
+              onClick={() => handleProtectedAction('/profile')}
+              className="flex flex-col items-center gap-1 rounded-2xl px-1 py-1 text-[11px] font-semibold text-white/85 transition hover:bg-white/10"
+            >
+              <span className="material-symbols-outlined text-[22px]">person</span>
+              <span>Профиль</span>
+            </button>
+          </div>
+        </nav>
+      )}
     </div>
   )
 }

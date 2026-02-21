@@ -4,10 +4,10 @@ import { useAuth } from '../AuthContext'
 
 type UserRole = 'client' | 'contractor' | 'supplier-materials'
 
-const roleOptions: Array<{ id: UserRole; label: string; icon: string }> = [
-  { id: 'client', label: 'Клиент', icon: 'person' },
-  { id: 'contractor', label: 'Подрядчик', icon: 'engineering' },
-  { id: 'supplier-materials', label: 'Поставщик', icon: 'inventory_2' }
+const roleOptions: Array<{ id: UserRole; label: string; icon: string; hint: string }> = [
+  { id: 'client', label: 'Застройщик / Заказчик', icon: 'apartment', hint: 'Проекты, сметы и контроль подрядчиков' },
+  { id: 'contractor', label: 'Подрядчик', icon: 'engineering', hint: 'Заявки, сроки и коммерческие предложения' },
+  { id: 'supplier-materials', label: 'Поставщик', icon: 'inventory_2', hint: 'Каталог материалов и ответы на запросы' }
 ]
 
 const getHomeRouteByRole = (role?: UserRole) => {
@@ -26,6 +26,7 @@ export default function LoginPage() {
   const { login, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+
   const from = useMemo(() => {
     const state = location.state as { from?: string } | undefined
     if (!state?.from || state.from === '/login' || state.from === '/register') return ''
@@ -69,70 +70,83 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f7fafc] px-6 py-8 text-slate-900">
-      <div className="magic-grid absolute inset-0 opacity-70" />
-      <div className="magic-orb absolute -left-20 top-0 h-80 w-80 rounded-full bg-cyan-300/40" />
-      <div className="magic-orb absolute -right-16 bottom-0 h-96 w-96 rounded-full bg-blue-300/35" />
+    <div className="relative min-h-screen overflow-hidden bg-qal-bg px-4 py-6 text-qal-text-primary md:px-8 md:py-8">
+      <div className="magic-grid absolute inset-0 opacity-45" />
+      <div className="magic-orb absolute -left-20 top-0 h-72 w-72 rounded-full bg-cyan-300/35" />
+      <div className="magic-orb absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-indigo-300/30" />
 
       <div className="relative z-10 mx-auto w-full max-w-6xl">
-        <header className="mx-auto mb-10 flex max-w-5xl items-center justify-between gap-4">
-          <Link to="/" className="font-['Sora'] text-xl font-semibold tracking-tight">
-            Qal<span className="text-cyan-600">.ai</span>
+        <header className="mx-auto mb-8 flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-qal-border bg-qal-surface px-4 py-3">
+          <Link to="/" className="font-['Sora'] text-lg font-semibold tracking-tight">
+            Qal<span className="text-qal-primary">.ai</span>
           </Link>
-          <Link
-            to="/register"
-            className="rounded-xl border border-slate-300/70 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-cyan-400 hover:text-cyan-700"
-          >
-            Создать аккаунт
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="rounded-xl border border-qal-border bg-qal-bg px-4 py-2 text-sm font-semibold text-qal-text-secondary transition hover:border-qal-primary/50 hover:text-qal-primary"
+            >
+              Гостевой режим
+            </Link>
+            <Link
+              to="/register"
+              className="rounded-xl bg-qal-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-qal-primary-dark"
+            >
+              Создать аккаунт
+            </Link>
+          </div>
         </header>
 
-        <main className="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <section className="magic-card rounded-3xl p-7 md:p-10">
-            <p className="inline-flex items-center gap-2 rounded-full border border-cyan-300/70 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cyan-800">
-              <span className="inline-block h-2 w-2 rounded-full bg-cyan-500" />
-              Secure access
+        <main className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <section className="magic-card rounded-3xl p-6 md:p-8">
+            <p className="inline-flex items-center gap-2 rounded-full border border-qal-primary/30 bg-qal-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-qal-primary">
+              <span className="inline-block h-2 w-2 rounded-full bg-qal-primary" />
+              Secure Access
             </p>
 
-            <h1 className="mt-5 font-['Sora'] text-3xl font-semibold leading-tight md:text-5xl">
-              Вход в экосистему
-              <span className="magic-gradient-text block bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 bg-clip-text text-transparent">
-                Qal.ai
+            <h1 className="mt-4 font-['Sora'] text-3xl font-semibold leading-tight md:text-5xl">
+              Вход в платформу
+              <span className="magic-gradient-text block bg-gradient-to-r from-qal-primary via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
+                Qal.ai Enterprise
               </span>
             </h1>
 
-            <p className="mt-4 max-w-lg text-sm leading-relaxed text-slate-600 md:text-base">
-              После входа мы вернем вас к сценарию, который вы выбрали на гостевой странице.
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-qal-text-secondary md:text-base">
+              Выберите рабочую роль и продолжите сценарий без потери шага.
             </p>
 
             {from && (
-              <div className="mt-6 rounded-2xl border border-cyan-300/80 bg-cyan-50 px-4 py-3 text-sm text-cyan-900">
-                Продолжим с маршрута: <span className="font-semibold">{from}</span>
+              <div className="mt-5 rounded-2xl border border-qal-primary/30 bg-qal-primary/10 px-4 py-3 text-sm text-qal-text-primary">
+                Продолжим маршрут: <span className="font-semibold">{from}</span>
               </div>
             )}
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-6 grid gap-3">
               {roleOptions.map((option) => (
                 <button
                   key={option.id}
                   type="button"
                   onClick={() => setRole(option.id)}
-                  className={`rounded-2xl border px-3 py-3 text-center transition ${
+                  className={`w-full rounded-2xl border px-4 py-4 text-left transition ${
                     role === option.id
-                      ? 'border-slate-900 bg-slate-900 text-white'
-                      : 'border-slate-200 bg-white text-slate-700 hover:border-cyan-400 hover:text-cyan-700'
+                      ? 'border-qal-primary bg-qal-primary text-white shadow-lg shadow-qal-primary/25'
+                      : 'border-qal-border bg-white/80 text-qal-text-primary hover:border-qal-primary/50'
                   }`}
                 >
-                  <span className="material-symbols-outlined mb-1 block text-[20px]">{option.icon}</span>
-                  <span className="text-xs font-semibold">{option.label}</span>
+                  <div className="flex items-start gap-3">
+                    <span className="material-symbols-outlined text-[20px]">{option.icon}</span>
+                    <div>
+                      <p className="text-sm font-semibold">{option.label}</p>
+                      <p className={`mt-1 text-xs ${role === option.id ? 'text-white/80' : 'text-qal-text-secondary'}`}>{option.hint}</p>
+                    </div>
+                  </div>
                 </button>
               ))}
             </div>
           </section>
 
-          <section className="magic-card rounded-3xl p-7 md:p-9">
+          <section className="magic-card rounded-3xl p-6 md:p-8">
             <h2 className="font-['Sora'] text-2xl font-semibold tracking-tight">Авторизация</h2>
-            <p className="mt-2 text-sm text-slate-600">Введите данные аккаунта для продолжения.</p>
+            <p className="mt-2 text-sm text-qal-text-secondary">Введите данные аккаунта для продолжения.</p>
 
             {error && (
               <div className="mt-5 rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -142,25 +156,25 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Email</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-qal-text-secondary">Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"
+                  className="w-full rounded-xl border border-qal-border bg-white px-4 py-3 text-sm text-qal-text-primary outline-none transition focus:border-qal-primary"
                   placeholder="you@example.com"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Пароль</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.14em] text-qal-text-secondary">Пароль</label>
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"
+                  className="w-full rounded-xl border border-qal-border bg-white px-4 py-3 text-sm text-qal-text-primary outline-none transition focus:border-qal-primary"
                   placeholder="••••••••"
                 />
               </div>
@@ -168,15 +182,15 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2 inline-flex w-full items-center justify-center rounded-xl bg-qal-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-qal-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isLoading ? 'Входим...' : 'Войти'}
+                {isLoading ? 'Входим...' : 'Войти в кабинет'}
               </button>
             </form>
 
-            <p className="mt-6 text-sm text-slate-600">
+            <p className="mt-6 text-sm text-qal-text-secondary">
               Нет аккаунта?{' '}
-              <Link to="/register" className="font-semibold text-cyan-700 hover:text-cyan-800">
+              <Link to="/register" className="font-semibold text-qal-primary hover:text-qal-primary-dark">
                 Зарегистрироваться
               </Link>
             </p>

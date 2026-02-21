@@ -8,8 +8,10 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
     return (
-        <AppLayout>
-            {children}
-        </AppLayout>
+        <div className="app-shell">
+            <AppLayout>
+                {children}
+            </AppLayout>
+        </div>
     );
 }

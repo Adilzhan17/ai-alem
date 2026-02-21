@@ -152,15 +152,15 @@ export default function EstimatePage() {
 
     return (
         <Layout activePage="estimates">
-            <div className="flex flex-1 overflow-hidden relative h-full bg-qal-bg">
+            <div className="flex h-full flex-1 flex-col overflow-hidden bg-qal-bg xl:flex-row">
                 {/* Visual Accent */}
-                <div className="absolute top-0 right-1/4 w-[800px] h-[400px] bg-qal-primary/5 blur-[120px] pointer-events-none rounded-full" />
+                <div className="pointer-events-none absolute right-1/4 top-0 hidden h-[400px] w-[800px] rounded-full bg-qal-primary/5 blur-[120px] md:block" />
 
                 {/* Main Content Area */}
-                <section className="flex flex-col flex-1 min-w-0 overflow-hidden border-r border-qal-border relative z-10">
+                <section className="relative z-10 flex min-w-0 flex-1 flex-col overflow-hidden xl:border-r xl:border-qal-border">
                     {/* Header Section */}
-                    <div className="flex flex-col gap-4 md:gap-6 p-4 md:p-8 pb-4 shrink-0 bg-qal-bg/50 backdrop-blur-md z-20">
-                    <div className="flex flex-wrap justify-between items-start gap-6">
+                    <div className="z-20 shrink-0 bg-qal-bg/50 p-4 pb-4 backdrop-blur-md md:gap-6 md:p-8">
+                    <div className="flex flex-wrap items-start justify-between gap-4 md:gap-6">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-3">
                                     <h1 className="text-qal-text-primary text-3xl font-black tracking-tight leading-none">{t('technicalEstimate')}</h1>
@@ -171,10 +171,10 @@ export default function EstimatePage() {
                                 </div>
                                 <p className="text-qal-text-secondary text-sm font-bold opacity-60 italic">Объект: {location.state?.fileName || 'Анализ из чертежа #8843'}</p>
                             </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex w-full flex-wrap items-center gap-2 md:w-auto md:gap-3">
                             <button
                                 onClick={handleExport}
-                                className="flex items-center gap-2 h-11 px-6 rounded-2xl bg-qal-surface hover:bg-qal-primary/5 text-qal-text-primary text-xs font-bold border border-qal-border transition-all active:scale-95 shadow-sm"
+                                className="flex h-10 items-center gap-2 rounded-xl border border-qal-border bg-qal-surface px-3 text-[11px] font-bold text-qal-text-primary shadow-sm transition-all active:scale-95 hover:bg-qal-primary/5 md:h-11 md:px-6 md:text-xs"
                             >
                                 <span className="material-symbols-outlined text-[20px]">ios_share</span>
                                 {t('export')}
@@ -182,7 +182,7 @@ export default function EstimatePage() {
                             <button
                                 onClick={handleSaveEstimate}
                                 disabled={isSaving || !!savedEstimateId}
-                                className="flex items-center gap-2 h-11 px-6 rounded-2xl bg-qal-surface hover:bg-qal-primary/5 text-qal-text-primary text-xs font-bold border border-qal-border transition-all active:scale-95 shadow-sm disabled:opacity-50"
+                                className="flex h-10 items-center gap-2 rounded-xl border border-qal-border bg-qal-surface px-3 text-[11px] font-bold text-qal-text-primary shadow-sm transition-all active:scale-95 hover:bg-qal-primary/5 disabled:opacity-50 md:h-11 md:px-6 md:text-xs"
                             >
                                 <span className="material-symbols-outlined text-[20px]">save</span>
                                 {savedEstimateId ? 'Сохранено' : 'Сохранить'}
@@ -210,14 +210,14 @@ export default function EstimatePage() {
                                     if (!res.ok) return toast.error('Не удалось создать запрос поставщикам')
                                     toast.success('Запрос поставщикам создан')
                                 }}
-                                className="flex items-center gap-2 h-11 px-6 rounded-2xl bg-qal-surface hover:bg-qal-primary/5 text-qal-text-primary text-xs font-bold border border-qal-border transition-all active:scale-95 shadow-sm"
+                                className="flex h-10 items-center gap-2 rounded-xl border border-qal-border bg-qal-surface px-3 text-[11px] font-bold text-qal-text-primary shadow-sm transition-all active:scale-95 hover:bg-qal-primary/5 md:h-11 md:px-6 md:text-xs"
                             >
                                 <span className="material-symbols-outlined text-[20px]">local_shipping</span>
                                 Запросить поставщиков
                             </button>
                             <button
                                 onClick={() => navigate('/contractors', { state: { estimate: displayItems, grandTotal } })}
-                                className="flex items-center gap-2 h-11 px-6 rounded-2xl bg-qal-primary hover:bg-qal-primary-dark text-white text-xs font-bold shadow-lg shadow-qal-primary/20 transition-all active:scale-95"
+                                className="flex h-10 items-center gap-2 rounded-xl bg-qal-primary px-3 text-[11px] font-bold text-white shadow-lg shadow-qal-primary/20 transition-all active:scale-95 hover:bg-qal-primary-dark md:h-11 md:px-6 md:text-xs"
                             >
                                 <span className="material-symbols-outlined text-[20px]">request_quote</span>
                                 Запросить КП
@@ -251,8 +251,9 @@ export default function EstimatePage() {
                     )}
 
                     {/* Table View */}
-                    <div className="flex-1 overflow-y-auto px-8 pb-32 no-scrollbar scroll-smooth">
-                        <table className="w-full text-left">
+                    <div className="no-scrollbar flex-1 overflow-y-auto px-3 pb-28 md:px-8 md:pb-32">
+                        <div className="overflow-x-auto">
+                        <table className="w-full min-w-[760px] text-left">
                             <thead className="sticky top-0 bg-qal-bg/95 backdrop-blur-md z-10 border-b border-qal-border">
                                 <tr>
                                     <th className="py-5 px-4 text-[10px] font-black text-qal-text-secondary uppercase tracking-[0.2em]">{t('itemDescription')}</th>
@@ -277,10 +278,11 @@ export default function EstimatePage() {
                                 ))}
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     {/* Table Footer / Summary Bar */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-qal-surface/80 backdrop-blur-2xl border-t border-qal-border p-4 md:p-8 flex flex-col md:flex-row gap-3 md:gap-0 justify-between items-start md:items-center shadow-lg z-30">
+                    <div className="relative left-0 right-0 bottom-0 z-30 flex flex-col items-start justify-between gap-3 border-t border-qal-border bg-qal-surface/85 p-4 shadow-lg backdrop-blur-2xl md:absolute md:flex-row md:items-center md:gap-0 md:p-8">
                         <div className="flex items-center gap-4">
                             <span className="material-symbols-outlined text-qal-primary text-3xl">functions</span>
                             <div>
@@ -289,14 +291,14 @@ export default function EstimatePage() {
                             </div>
                         </div>
                         <div className="flex flex-col items-end">
-                            <span className="text-4xl font-black text-qal-text-primary tracking-tighter">{formatCurrency(grandTotal)}</span>
+                            <span className="text-3xl font-black tracking-tighter text-qal-text-primary md:text-4xl">{formatCurrency(grandTotal)}</span>
                             <span className="text-emerald-600 text-[10px] font-black uppercase tracking-widest mt-1">Оптимизировано по лучшим ценам</span>
                         </div>
                     </div>
                 </section>
 
                 {/* Right Settings/Market Panel */}
-                <aside className="w-[420px] bg-qal-surface border-l border-qal-border flex flex-col shrink-0 overflow-y-auto no-scrollbar z-20">
+                <aside className="z-20 flex w-full shrink-0 flex-col overflow-y-auto border-t border-qal-border bg-qal-surface no-scrollbar xl:w-[420px] xl:border-l xl:border-t-0">
                     <div className="p-4 md:p-8 space-y-8 md:space-y-10">
                         <div>
                             <h3 className="text-qal-text-primary font-black text-lg tracking-tight flex items-center gap-3 mb-6">

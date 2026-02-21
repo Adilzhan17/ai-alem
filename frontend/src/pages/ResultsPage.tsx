@@ -91,10 +91,10 @@ export default function ResultsPage() {
     return (
         <Layout activePage="results">
             {show3D && (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-8 animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 md:p-8 animate-in fade-in duration-300">
                     <div className="bg-surface-dark border border-border-dark rounded-3xl w-full max-w-6xl h-[80vh] flex flex-col relative overflow-hidden shadow-2xl">
-                        <div className="flex justify-between items-center p-6 border-b border-border-dark bg-sidebar-dark">
-                            <h3 className="text-xl font-bold text-white flex items-center gap-3">
+                        <div className="flex justify-between items-center p-4 md:p-6 border-b border-border-dark bg-sidebar-dark">
+                            <h3 className="text-sm md:text-xl font-bold text-white flex items-center gap-2 md:gap-3 pr-3">
                                 <span className="material-symbols-outlined text-primary">view_in_ar</span>
                                 3D Тур: {selectedProperty?.title}
                             </h3>
@@ -131,7 +131,7 @@ export default function ResultsPage() {
             )}
 
             <div className="flex flex-col h-full overflow-hidden bg-qal-bg">
-                <div className="bg-qal-surface/80 backdrop-blur-md border-b border-qal-border px-4 md:px-8 py-4 shrink-0 flex items-center justify-between gap-3 md:gap-6 z-20 shadow-sm">
+                <div className="bg-qal-surface/80 backdrop-blur-md border-b border-qal-border px-4 md:px-8 py-4 shrink-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 md:gap-6 z-20 shadow-sm">
                     <div className="flex items-center gap-4 flex-1 min-w-0">
                         <div className="size-10 rounded-xl bg-qal-primary/10 flex items-center justify-center text-qal-primary border border-qal-primary/20">
                             <span className="material-symbols-outlined text-2xl">auto_awesome</span>
@@ -141,7 +141,7 @@ export default function ResultsPage() {
                             <p className="text-sm font-semibold text-qal-text-primary truncate italic">"{queryText}"</p>
                         </div>
                     </div>
-                    <button className="flex items-center gap-2 px-4 md:px-5 py-2.5 bg-qal-surface hover:bg-qal-bg border border-qal-border rounded-xl text-qal-text-primary text-[10px] md:text-xs font-bold transition-all shadow-sm active:scale-95" onClick={() => navigate('/broker', { state: { query: queryText } })}>
+                    <button className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 md:px-5 py-2.5 bg-qal-surface hover:bg-qal-bg border border-qal-border rounded-xl text-qal-text-primary text-[10px] md:text-xs font-bold transition-all shadow-sm active:scale-95" onClick={() => navigate('/broker', { state: { query: queryText } })}>
                         <span className="material-symbols-outlined text-[18px]">edit_note</span>
                         {t('refinePrompt')}
                     </button>
@@ -199,12 +199,12 @@ export default function ResultsPage() {
                     </section>
 
                     <div className="flex-1 relative flex flex-col bg-qal-bg min-h-[45vh] lg:min-h-0">
-                        <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 z-20 bg-qal-surface/90 backdrop-blur-md p-1.5 rounded-2xl border border-qal-border shadow-xl flex gap-1 items-center">
-                            <button onClick={() => setViewMode('map')} className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition-all ${viewMode === 'map' ? 'bg-qal-primary text-white shadow-sm' : 'text-qal-text-secondary hover:text-qal-text-primary'}`}>
+                        <div className="absolute top-3 md:top-6 left-1/2 -translate-x-1/2 z-20 bg-qal-surface/90 backdrop-blur-md p-1 rounded-2xl border border-qal-border shadow-xl flex gap-1 items-center">
+                            <button onClick={() => setViewMode('map')} className={`flex items-center gap-2 px-3 md:px-5 py-2 rounded-xl text-[11px] md:text-xs font-bold transition-all ${viewMode === 'map' ? 'bg-qal-primary text-white shadow-sm' : 'text-qal-text-secondary hover:text-qal-text-primary'}`}>
                                 <span className="material-symbols-outlined text-lg">map</span>
                                 Карта
                             </button>
-                            <button onClick={() => setViewMode('details')} className={`flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold transition-all ${viewMode === 'details' ? 'bg-qal-primary text-white shadow-sm' : 'text-qal-text-secondary hover:text-qal-text-primary'}`}>
+                            <button onClick={() => setViewMode('details')} className={`flex items-center gap-2 px-3 md:px-5 py-2 rounded-xl text-[11px] md:text-xs font-bold transition-all ${viewMode === 'details' ? 'bg-qal-primary text-white shadow-sm' : 'text-qal-text-secondary hover:text-qal-text-primary'}`}>
                                 <span className="material-symbols-outlined text-lg">info</span>
                                 Детали
                             </button>
@@ -225,13 +225,13 @@ export default function ResultsPage() {
                                 />
                             </div>
                         ) : (
-                            <div className="size-full overflow-y-auto p-12 custom-scrollbar animate-in fade-in duration-500">
+                            <div className="size-full overflow-y-auto p-4 md:p-8 lg:p-12 custom-scrollbar animate-in fade-in duration-500">
                                 {selectedProperty ? (
                                     <div className="max-w-5xl mx-auto pb-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                        <div className="relative h-[400px] w-full rounded-b-3xl overflow-hidden shadow-2xl mb-8 group">
+                                        <div className="relative h-[280px] md:h-[400px] w-full rounded-b-3xl overflow-hidden shadow-2xl mb-6 md:mb-8 group">
                                             <img src={selectedProperty.image_url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                                            <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end">
+                                            <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6 text-white flex flex-col gap-4 md:flex-row md:justify-between md:items-end">
                                                 <div>
                                                     <div className="flex items-center gap-2 mb-2">
                                                         <span className="px-2 py-0.5 bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-widest rounded-full">Available</span>
@@ -243,16 +243,16 @@ export default function ResultsPage() {
                                                         {selectedProperty.district}
                                                     </p>
                                                 </div>
-                                                <button onClick={() => setShow3D(true)} className="px-6 py-2.5 bg-white/10 backdrop-blur-md hover:bg-white text-white hover:text-black rounded-full text-sm font-bold transition-all border border-white/30 flex items-center gap-2">
+                                                <button onClick={() => setShow3D(true)} className="self-start px-4 md:px-6 py-2.5 bg-white/10 backdrop-blur-md hover:bg-white text-white hover:text-black rounded-full text-xs md:text-sm font-bold transition-all border border-white/30 flex items-center gap-2">
                                                     <span className="material-symbols-outlined">view_in_ar</span>
                                                     3D Tour
                                                 </button>
                                             </div>
                                         </div>
 
-                                        <div className="px-6 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <div className="px-0 md:px-6 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
                                             <div className="lg:col-span-2 space-y-8">
-                                                <div className="grid grid-cols-3 gap-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                                     <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center hover:border-qal-primary/30 transition-colors">
                                                         <span className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Price</span>
                                                         <span className="text-xl font-bold text-gray-900">₸{(selectedProperty.price / 1000000).toFixed(1)}M</span>

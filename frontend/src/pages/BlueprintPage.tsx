@@ -56,16 +56,16 @@ export default function BlueprintPage() {
         <Layout activePage="blueprints">
             <div className="flex flex-col h-full overflow-hidden relative bg-qal-bg">
                 {/* Visual Decoration */}
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-qal-primary/5 blur-[150px] pointer-events-none rounded-full" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-qal-primary/5 blur-[120px] pointer-events-none rounded-full" />
+                <div className="absolute top-0 right-0 hidden w-[600px] h-[600px] bg-qal-primary/5 blur-[150px] pointer-events-none rounded-full md:block" />
+                <div className="absolute bottom-0 left-0 hidden w-[400px] h-[400px] bg-qal-primary/5 blur-[120px] pointer-events-none rounded-full md:block" />
 
-                <div className="flex-1 flex overflow-hidden">
+                <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
                     {/* Left: Upload Zone */}
-                    <div className="w-full lg:w-7/12 p-12 flex flex-col justify-center items-center relative z-10">
+                    <div className="relative z-10 flex w-full flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:w-7/12 lg:p-12">
                         <div className="w-full max-w-2xl flex flex-col items-center">
-                            <div className="text-center mb-10">
-                                <h3 className="text-4xl font-black text-qal-text-primary mb-4 tracking-tight">{t('dragDropBlueprints')}</h3>
-                                <p className="text-qal-text-secondary text-lg max-w-lg mx-auto leading-relaxed">{t('uploadDesc')}</p>
+                            <div className="text-center mb-8 md:mb-10">
+                                <h3 className="text-3xl md:text-4xl font-black text-qal-text-primary mb-3 md:mb-4 tracking-tight">{t('dragDropBlueprints')}</h3>
+                                <p className="text-qal-text-secondary text-base md:text-lg max-w-lg mx-auto leading-relaxed">{t('uploadDesc')}</p>
                             </div>
 
                             <div
@@ -95,7 +95,7 @@ export default function BlueprintPage() {
                                 </div>
                             </div>
 
-                            <div className="mt-12 grid grid-cols-3 gap-8 w-full">
+                            <div className="mt-8 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-8 w-full">
                                 {[
                                     { icon: 'auto_awesome', title: t('aiAnalysis'), desc: 'Детекция комнат и зон.' },
                                     { icon: 'square_foot', title: t('measurements'), desc: 'Точный расчет площади.' },
@@ -116,7 +116,7 @@ export default function BlueprintPage() {
                     </div>
 
                     {/* Right: Queue Panel */}
-                    <div className="w-full lg:w-5/12 bg-qal-surface border-l border-qal-border flex flex-col h-full shadow-lg z-20">
+                    <div className="w-full lg:w-5/12 bg-qal-surface border-t lg:border-t-0 lg:border-l border-qal-border flex flex-col h-full shadow-lg z-20">
                         <div className="p-6 border-b border-qal-border flex justify-between items-center bg-qal-bg/30">
                             <div>
                                 <h3 className="text-qal-text-primary font-black text-lg tracking-tight">{t('analysisQueue')}</h3>

@@ -123,9 +123,9 @@ export default function BrokerPage() {
 
     return (
         <Layout>
-            <div className="flex flex-col h-[calc(100vh-theme(spacing.24))] w-full max-w-5xl mx-auto border rounded-xl shadow-sm bg-background overflow-hidden relative px-2 md:px-0">
+            <div className="relative mx-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-xl border bg-background px-2 shadow-sm min-h-[calc(100dvh-8rem)] md:h-[calc(100vh-theme(spacing.24))] md:min-h-0 md:px-0">
                 {/* Header */}
-                <div className="p-4 border-b bg-card/50 backdrop-blur-sm flex items-center justify-between z-10">
+                <div className="z-10 flex items-center justify-between gap-2 border-b bg-card/50 p-3 md:p-4 backdrop-blur-sm">
                     <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary shadow-sm">
                             <Bot className="h-6 w-6" />
@@ -137,7 +137,7 @@ export default function BrokerPage() {
                                     <span className="w-1 h-1 rounded-full bg-emerald-500 mr-1 animate-pulse" />
                                     Online
                                 </Badge>
-                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">GPT-4o Engine</span>
+                                <span className="hidden sm:inline text-[10px] text-muted-foreground uppercase tracking-wider font-medium">GPT-4o Engine</span>
                             </div>
                         </div>
                     </div>
@@ -152,7 +152,7 @@ export default function BrokerPage() {
                 </div>
 
                 {/* Chat Area */}
-                <ScrollArea className="flex-1 p-4" ref={scrollRef}>
+                <ScrollArea className="flex-1 p-3 md:p-4" ref={scrollRef}>
                     <div className="space-y-6 pb-4 max-w-3xl mx-auto">
                         {messages.map((msg, i) => (
                             <div key={i} className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
@@ -164,7 +164,7 @@ export default function BrokerPage() {
                                     )}
                                 </Avatar>
 
-                                <div className={`flex flex-col gap-1 max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                                <div className={`flex flex-col gap-1 max-w-[88%] sm:max-w-[80%] ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                                     <div className={`px-4 py-3 rounded-2xl text-sm ${msg.role === 'user' ? 'bg-primary text-primary-foreground rounded-tr-sm' : 'bg-muted rounded-tl-sm'}`}>
                                         <div className="prose prose-sm dark:prose-invert max-w-none">
                                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -196,7 +196,7 @@ export default function BrokerPage() {
                 </ScrollArea>
 
                 {/* Input Area */}
-                <div className="p-4 border-t bg-background z-10">
+                <div className="z-10 border-t bg-background p-3 md:p-4">
                     <div className="max-w-3xl mx-auto space-y-4">
                         {/* Suggestions */}
                         <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
@@ -232,7 +232,7 @@ export default function BrokerPage() {
                             </Button>
                         </div>
 
-                        <div className="flex items-center justify-center gap-6 text-[10px] text-muted-foreground">
+                        <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] text-muted-foreground sm:gap-6">
                             <div className="flex items-center gap-1.5">
                                 <Shield className="h-3 w-3" />
                                 <span>End-to-End Encrypted</span>

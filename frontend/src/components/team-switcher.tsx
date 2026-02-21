@@ -1,22 +1,10 @@
 "use client"
 
-import * as React from "react"
-import { ChevronsUpDown, Plus } from "lucide-react"
-
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
+import { Link } from "react-router-dom"
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar,
 } from "./ui/sidebar"
 
 export function TeamSwitcher({
@@ -24,65 +12,31 @@ export function TeamSwitcher({
 }: {
     teams: {
         name: string
-        logo: React.ElementType
         plan: string
     }[]
 }) {
-    const { isMobile } = useSidebar()
-    const [activeTeam, setActiveTeam] = React.useState(teams[0])
+    const activeTeam = teams[0]
 
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                        >
-                            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                                <activeTeam.logo className="size-4" />
-                            </div>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold">
-                                    {activeTeam.name}
-                                </span>
-                                <span className="truncate text-xs">{activeTeam.plan}</span>
-                            </div>
-                            <ChevronsUpDown className="ml-auto" />
-                        </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                        align="start"
-                        side={isMobile ? "bottom" : "right"}
-                        sideOffset={4}
-                    >
-                        <DropdownMenuLabel className="text-xs text-muted-foreground">
-                            Teams
-                        </DropdownMenuLabel>
-                        {teams.map((team, index) => (
-                            <DropdownMenuItem
-                                key={team.name}
-                                onClick={() => setActiveTeam(team)}
-                                className="gap-2 p-2"
-                            >
-                                <div className="flex size-6 items-center justify-center rounded-sm border">
-                                    <team.logo className="size-4 shrink-0" />
-                                </div>
-                                {team.name}
-                                <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-                            </DropdownMenuItem>
-                        ))}
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-2 p-2">
-                            <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                                <Plus className="size-4" />
-                            </div>
-                            <div className="font-medium text-muted-foreground">Add team</div>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <SidebarMenuButton
+                    asChild
+                    size="lg"
+                    className="h-auto rounded-2xl border border-qal-border/70 bg-qal-surface px-3 py-3 hover:bg-white data-[active=true]:bg-white"
+                >
+                    <Link to="/" className="gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-qal-primary text-sm font-bold text-white">
+                            Q
+                        </div>
+                        <div className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+                            <span className="truncate font-['Sora'] text-lg font-semibold text-qal-text-primary">
+                                Qal<span className="text-cyan-600">.ai</span>
+                            </span>
+                            <span className="truncate text-xs text-qal-text-secondary">{activeTeam.plan}</span>
+                        </div>
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     )

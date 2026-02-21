@@ -2,14 +2,10 @@
 
 import * as React from "react"
 import {
-    Command,
     LayoutDashboard,
     Briefcase,
-    Users,
-    Map,
     User,
-    ShieldCheck,
-    Frame
+    ShieldCheck
 } from "lucide-react"
 
 import { NavMain } from "../nav-main"
@@ -26,11 +22,9 @@ import {
 import { useAuth } from "../../AuthContext"
 import { useLanguage } from "../../LanguageContext"
 
-// Static organization data
 const teams = [
     {
         name: "Qal.ai",
-        logo: Command,
         plan: "Enterprise",
     },
 ]
@@ -54,11 +48,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         navMain.push(
             {
                 title: t('platform'),
-                url: "/",
+                url: "/dashboard",
                 icon: LayoutDashboard,
                 isActive: true,
                 items: [
-                    { title: t('commandCenter'), url: "/" },
+                    { title: t('commandCenter'), url: "/dashboard" },
                     { title: t('mapView'), url: "/results" },
                     { title: t('aiBroker'), url: "/broker" }
                 ],
@@ -176,14 +170,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // const navSecondary = []
 
     return (
-        <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
+        <Sidebar collapsible="icon" className="border-r border-qal-border/80 bg-qal-surface" {...props}>
+            <SidebarHeader className="border-b border-qal-border/70 bg-qal-surface px-3 pb-3 pt-4">
                 <TeamSwitcher teams={teams} />
             </SidebarHeader>
-            <SidebarContent>
+            <SidebarContent className="bg-qal-surface px-2 py-3">
                 <NavMain items={navMain} />
             </SidebarContent>
-            <SidebarFooter>
+            <SidebarFooter className="border-t border-qal-border/70 bg-qal-surface px-2 pb-3 pt-2">
                 <NavUser user={userData} />
             </SidebarFooter>
             <SidebarRail />

@@ -183,7 +183,10 @@ const Sidebar = React.forwardRef<
                     <SheetContent
                         data-sidebar="sidebar"
                         data-mobile="true"
-                        className="w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+                        className={cn(
+                            "z-[80] w-[--sidebar-width] border-r border-sidebar-border p-0 text-sidebar-foreground shadow-[0_24px_60px_-28px_rgba(15,23,42,0.65)] [&>button]:hidden",
+                            className,
+                        )}
                         style={
                             {
                                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -191,7 +194,11 @@ const Sidebar = React.forwardRef<
                         }
                         side={side}
                     >
-                        <div className="flex h-full w-full flex-col">{children}</div>
+                        {/* Force a fully opaque layer on mobile so page content never bleeds through the drawer */}
+                        <div aria-hidden className="absolute inset-0 bg-qal-surface" />
+                        <div className="relative z-10 flex h-full w-full flex-col bg-qal-surface">
+                            {children}
+                        </div>
                     </SheetContent>
                 </Sheet>
             );
